@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-        <!-- Profile Sidebar -->
+        <!-- // Redirigir de vuelta con un mensaje de éxito -->
         <div class="col-md-3">
             <div class="card">
                 <div class="card-header">{{ __('Perfil') }}</div>
@@ -15,7 +15,7 @@
             </div>
         </div>
 
-        <!-- Main Content -->
+        <!-- Contenido principal -->
         <div class="col-md-6">
             <div class="card mb-4">
                 <div class="card-header">{{ __('Dashboard') }}</div>
@@ -29,7 +29,7 @@
                 </div>
             </div>
 
-            <!-- Post Section -->
+            <!-- Sección de publicaciones -->
             <div class="card mb-4">
                 <div class="card-header">{{ __('Publicaciones') }}</div>
                 <div class="card-body">
@@ -41,7 +41,7 @@
                         </div>
                     </form>
 
-                    <!-- Display Posts -->
+                    <!-- Mostrar publicaciones -->
                     @if(isset($posts) && $posts->count())
                         @foreach($posts as $post)
                             <div class="post mb-3">
@@ -61,7 +61,7 @@
                         @endforeach
                     @else
                     <ul class="navbar-nav ml-auto">
-                        <!-- Authentication Links -->
+                        <!-- Enlaces de autenticación -->
                         @guest
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
@@ -99,7 +99,7 @@
             </div>
         </div>
 
-        <!-- Suggestions Sidebar -->
+        <!-- Barra lateral de sugerencias -->
         <div class="col-md-3">
             <div class="card">
                 <div class="card-header">{{ __('Sugerencias de Amigos') }}</div>
@@ -119,7 +119,7 @@
                                 <button class="btn btn-sm btn-primary mt-1">Agregar</button>
                             </div>
                         </li>
-                        <!-- Add more friend suggestions as needed -->
+                        <!-- Agregue más sugerencias de amigos según sea necesario -->
                     </ul>
                 </div>
             </div>
