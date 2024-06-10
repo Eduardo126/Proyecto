@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\CommentController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -18,4 +19,9 @@ Route::post('/posts', [PostController::class, 'store'])->middleware('auth')->nam
 // Rutas para los likes
 Route::post('/posts/{post}/like', [PostController::class, 'like'])->middleware('auth')->name('posts.like');
 Route::delete('/posts/{post}/like', [PostController::class, 'unlike'])->middleware('auth')->name('posts.unlike');
+
+// routes/web.php
+
+Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
+
 

@@ -26,11 +26,28 @@
                                 <button type="submit" class="btn btn-sm btn-outline-danger me-2">No me gusta</button>
                             </form>
                         @endif
-                        <button class="btn btn-sm btn-outline-secondary">Comentar</button>
                     </div>
+
+                    <!-- Mostrar los comentarios -->
+                    <div class="mt-4">
+                        @foreach($post->comments as $comment)
+                            <div class="mb-2">
+                                <strong>{{ $comment->user->name }}</strong>: {{ $comment->content }}
+                                <small class="text-muted">{{ $comment->created_at->diffForHumans() }}</small>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <!-- Formulario para agregar un comentario -->
+                    <form action="{{ route('comments.store', $post->id) }}" method="POST" class="mt-3">
+                        @csrf
+                        <div class="mb-3">
+                            <textarea name="content" class="form-control" rows="2" placeholder="Escribe un comentario..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Comentar</button>
+                    </form>
                 </div>
             </div>
         @endforeach
     </div>
 @endsection
-

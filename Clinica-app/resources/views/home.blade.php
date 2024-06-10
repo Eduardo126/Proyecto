@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-        <!-- // Redirigir de vuelta con un mensaje de éxito -->
+        <!-- Perfil del usuario -->
         <div class="col-md-3">
             <div class="card">
                 <div class="card-header">{{ __('Perfil') }}</div>
@@ -33,68 +33,70 @@
             <div class="card mb-4">
                 <div class="card-header">{{ __('Publicaciones') }}</div>
                 <div class="card-body">
-                    <form method="POST" action="{{ route('posts.store') }}">
+                    <form method="POST" action="{{ route('posts.store') }}" enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3">
                             <textarea class="form-control" name="content" placeholder="¿Qué estás pensando?" required></textarea>
-                            <button class="btn btn-primary mt-2" type="submit">Publicar</button>
                         </div>
+                        <div class="mb-3">
+                            <input type="file" name="image" class="form-control">
+                        </div>
+                        <button class="btn btn-primary mt-2" type="submit">Publicar</button>
                     </form>
 
                     <!-- Mostrar publicaciones -->
                     @if(isset($posts) && $posts->count())
                         @foreach($posts as $post)
-                            <div class="post mb-3">
-                                <div class="d-flex">
-                                    <img src="https://via.placeholder.com/50" class="rounded-circle me-2" alt="User Image">
-                                    <div>
-                                        <h5 class="m-0">{{ $post->user->name }}</h5>
-                                        <small class="text-muted">{{ $post->created_at->diffForHumans() }}</small>
+                            <div class="card mt-3">
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <img src="https://via.placeholder.com/50" class="rounded-circle me-2" alt="User Image">
+                                        <div>
+                                            <h5 class="m-0">{{ $post->user->name }}</h5>
+                                            <small class="text-muted">{{ $post->created_at->diffForHumans() }}</small>
+                                        </div>
                                     </div>
-                                </div>
-                                <p class="mt-2">{{ $post->content }}</p>
-                                <div class="d-flex">
-                                    <button class="btn btn-sm btn-outline-primary me-2">Me gusta</button>
-                                    <button class="btn btn-sm btn-outline-secondary">Comentar</button>
+                                    <p class="mt-2">{{ $post->content }}</p>
+                                    @if($post->image)
+                                        <img src="{{ asset('storage/' . $post->image) }}" class="img-fluid mt-2" alt="Imagen de la publicación">
+                                    @endif
+                                    <div class="d-flex mt-2">
+                                        <form action="{{ route('posts.like', $post->id) }}" method="POST" class="me-2">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-outline-primary">Me gusta</button>
+                                        </form>
+                                        <form action="{{ route('posts.unlike', $post->id) }}" method="POST" class="me-2">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">No me gusta</button>
+                                        </form>
+                                        <button class="btn btn-sm btn-outline-secondary">Comentar</button>
+                                    </div>
+                                    
+                                    <!-- Mostrar los comentarios -->
+                                    <div class="mt-4">
+                                        @foreach($post->comments as $comment)
+                                            <div class="mb-2">
+                                                <strong>{{ $comment->user->name }}</strong>: {{ $comment->content }}
+                                                <small class="text-muted">{{ $comment->created_at->diffForHumans() }}</small>
+                                            </div>
+                                        @endforeach
+                                    </div>
+
+                                    <!-- Formulario para agregar un comentario -->
+                                    <form action="{{ route('comments.store', $post->id) }}" method="POST" class="mt-3">
+                                        @csrf
+                                        <div class="mb-3">
+                                            <textarea name="content" class="form-control" rows="2" placeholder="Escribe un comentario..."></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary">Comentar</button>
+                                    </form>
                                 </div>
                             </div>
                         @endforeach
                     @else
-                    <ul class="navbar-nav ml-auto">
-                        <!-- Enlaces de autenticación -->
-                        @guest
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                            </li>
-                            @if (Route::has('register'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                                </li>
-                            @endif
-                        @else
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->name }}
-                                </a>
-                    
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                        onclick="event.preventDefault();
-                                                        document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
-                                    </a>
-                    
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                        @csrf
-                                    </form>
-                                </div>
-                            </li>
-                        @endguest
-                    </ul>
-                                        @endif
+                        <p>No hay publicaciones disponibles.</p>
+                    @endif
                 </div>
             </div>
         </div>
@@ -126,6 +128,7 @@
         </div>
     </div>
 </div>
+@endsection
 
 <style>
     .post {
@@ -136,6 +139,5 @@
         border-bottom: none;
     }
 </style>
-@endsection
 
 
